@@ -30,14 +30,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Training')
     parser.add_argument('--config', type=str, required=True, help='config file')
     parser.add_argument('--opts', default=None, nargs=argparse.REMAINDER)
-    print(cfg)
     args = parser.parse_args()
     assert args.config is not None
-    
     cfg = load_cfg_from_cfg_file(args.config)
     if args.opts is not None:
         cfg = merge_cfg_from_list(cfg, args.opts)
-    
     return cfg
 
 
@@ -316,7 +313,6 @@ def do_epoch(args: argparse.Namespace,
 
 if __name__ == "__main__":
     args = parse_args()
-    print(args)
     os.environ["CUDA_VISIBLE_DEVICES"] = ','.join(str(x) for x in args.gpus)
 
     if args.debug:
