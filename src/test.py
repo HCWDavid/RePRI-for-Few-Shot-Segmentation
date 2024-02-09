@@ -54,9 +54,8 @@ def main_worker(rank: int,
         random.seed(args.manual_seed + rank)
 
     # ========== Model  ==========
-    model = get_model(args).to(rank)
-    model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
-    model = DDP(model, device_ids=[rank])
+    model = get_model(args)
+
 
     root = get_model_dir(args)
 
@@ -126,13 +125,13 @@ def episodic_validate(args: argparse.Namespace,
         runtime = 0
         for e in tqdm(range(nb_episodes)):
             t0 = time.time()
-            features_s = torch.zeros(args.batch_size_val, args.shot, c, h, w).to(dist.get_rank())
-            features_q = torch.zeros(args.batch_size_val, 1, c, h, w).to(dist.get_rank())
+            features_s = torch.zeros(args.batch_size_val, args.shot, c, h, w)
+            features_q = torch.zeros(args.batch_size_val, 1, c, h, w)
             gt_s = 255 * torch.ones(args.batch_size_val, args.shot, args.image_size,
-                                    args.image_size).long().to(dist.get_rank())
+                                    args.image_size).long()
             gt_q = 255 * torch.ones(args.batch_size_val, 1, args.image_size,
-                                    args.image_size).long().to(dist.get_rank())
-            n_shots = torch.zeros(args.batch_size_val).to(dist.get_rank())
+                                    args.image_size).long()
+            n_shots = torch.zeros(args.batch_size_val)
             classes = []  # All classes considered in the tasks
 
             # =========== Generate tasks and extract features for each task ===============
@@ -145,10 +144,10 @@ def episodic_validate(args: argparse.Namespace,
                         qry_img, q_label, spprt_imgs, s_label, subcls, _, _ = next(iter_loader)
                     iter_num += 1
 
-                    q_label = q_label.to(dist.get_rank(), non_blocking=True)
-                    spprt_imgs = spprt_imgs.to(dist.get_rank(), non_blocking=True)
-                    s_label = s_label.to(dist.get_rank(), non_blocking=True)
-                    qry_img = qry_img.to(dist.get_rank(), non_blocking=True)
+                    q_label = q_label
+                    spprt_imgs = spprt_imgs
+                    s_label = s_label
+                    qry_img = qry_img
 
                     f_s = model.module.extract_features(spprt_imgs.squeeze(0))
                     f_q = model.module.extract_features(qry_img)
