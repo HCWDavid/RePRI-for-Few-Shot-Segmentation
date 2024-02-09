@@ -254,7 +254,7 @@ def do_epoch(args: argparse.Namespace,
         model.train()
         current_iter = epoch * len(train_loader) + i + 1
 
-        images, gt = iterable_train_loader.next()
+        images, gt = next(iterable_train_loader)
         images = images.to(dist.get_rank(), non_blocking=True)
         gt = gt.to(dist.get_rank(), non_blocking=True)
 

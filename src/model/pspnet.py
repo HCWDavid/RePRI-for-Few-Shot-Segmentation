@@ -9,7 +9,7 @@ def get_model(args) -> nn.Module:
     return PSPNet(args, zoom_factor=8, use_ppm=True)
 
 
-class PPM(nn.Module):
+class PPM(nn.Module): # Pyramid Pooling Module
     def __init__(self, in_dim, reduction_dim, bins):
         super(PPM, self).__init__()
         self.features = []

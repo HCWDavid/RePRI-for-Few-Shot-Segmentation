@@ -139,10 +139,10 @@ def episodic_validate(args: argparse.Namespace,
             with torch.no_grad():
                 for i in range(args.batch_size_val):
                     try:
-                        qry_img, q_label, spprt_imgs, s_label, subcls, _, _ = iter_loader.next()
+                        qry_img, q_label, spprt_imgs, s_label, subcls, _, _ = next(iter_loader)
                     except:
                         iter_loader = iter(val_loader)
-                        qry_img, q_label, spprt_imgs, s_label, subcls, _, _ = iter_loader.next()
+                        qry_img, q_label, spprt_imgs, s_label, subcls, _, _ = next(iter_loader)
                     iter_num += 1
 
                     q_label = q_label.to(dist.get_rank(), non_blocking=True)
